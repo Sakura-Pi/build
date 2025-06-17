@@ -121,6 +121,19 @@ function kernel_drivers_prepare_harness() {
 		driver_rtl8723cs
 	)
 
+	# Extension method for building board level drivers
+	declare -a custom_drivers=()
+	custom_drivers=$(call_extension_method "build_board_drivers" <<- 'BUILD_BOARD_DRIVERS'
+		*allow extensions to build custom driver for their boards*
+	BUILD_BOARD_DRIVERS
+	)
+
+	if [[ ${#custom_drivers[@]} -gt 0 ]]; then
+		readarray -t custom_drivers <<< "${custom_drivers}"
+		display_alert "Append custom board drivers" "${custom_drivers[*]}"
+		all_drivers+=("${custom_drivers[@]}")
+	fi
+
 	declare -a skip_drivers=("${KERNEL_DRIVERS_SKIP[@]}")
 	declare -a drivers=()
 
