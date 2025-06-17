@@ -31,14 +31,13 @@ function driver_sakurapi_vleds() {
     fetch_from_repo "$GITHUB_SOURCE/Sakura-Pi/ws2812-vleds" "ws2812-vleds" "commit:3b95cfc9cb3aeccc4143c96d8d79c1004cf95721"
 
     cd "$kerneldir" || exit
-    cp -R "${SRC}/cache/sources/ws2812-vleds" "$kerneldir/drivers/leds/rgb" \
-      && rm -rf "$kerneldir/drivers/leds/rgb/ws2812-vleds/.git"
+    cp -R "${SRC}/cache/sources/ws2812-vleds" "$kerneldir/drivers/leds" \
+      && rm -rf "$kerneldir/drivers/leds/ws2812-vleds/.git"
 
-    echo 'source "drivers/leds/rgb/ws2812-vleds/Kconfig"' \
-         >> "$kerneldir/drivers/leds/rgb/Kconfig"
+     sed -i '/^endif # NEW_LEDS/isource "drivers/leds/ws2812-vleds/Kconfig"'  $kerneldir/drivers/leds/Kconfig
 
-    echo 'include drivers/leds/rgb/ws2812-vleds/Makefile' \
-         >> "$kerneldir/drivers/leds/rgb/Makefile"
+    echo 'obj-y					+= ws2812-vleds/' \
+         >> "$kerneldir/drivers/leds/Makefile"
 
   fi
   
